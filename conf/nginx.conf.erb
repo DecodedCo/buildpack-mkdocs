@@ -45,11 +45,6 @@ http {
     }
   <% end %>
    
-  location / {
-      
-      alias /path/to/document_root
-  }
-
     location / {
       if ( $allowed = 'deny' ) { return 403; }
       expires 10s;
