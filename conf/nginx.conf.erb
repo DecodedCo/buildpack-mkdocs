@@ -30,9 +30,29 @@ http {
     server_name <%= require 'uri'; URI.parse(ENV["MKDOCS_SITEURL"]).host %>;
   <% end %>
 
+  # for pre-open closed test
+  map $http_x_forwarded_for $allowed {
+      default deny;
+      ~\s*::1$ allow;
+      ~\s*127.0.0.1$ allow;
+      ~\s*localhost$ allow;
+      ~\s*::ffff:127.0.0.1$   allow;
+  }
+
+  <% if ENV["LABS_IP"] %>
+    if ($http_x_forwarded_for ~ "<%= ENV["LABS_IP"]) %>") {
+     set $allow true;
+    }
+  <% end %>
+   
+  location / {
+      
+      alias /path/to/document_root
+  }
+
     location / {
+      if ( $allowed = 'deny' ) { return 403; }
       expires 10s;
     }
   }
 }
-
